@@ -1,10 +1,16 @@
 # import pygame module
-import pygame
+import pygame, os
 
 
 class SimpleGame:
     def __init__(self):
-        self.screen = None
+        self.main_screen = None
+        self.main_character = pygame.image.load("../images/big_smile.png")
+
+
+
+        # initialize the pygame module
+        pygame.init()
 
     def main(self):
 
@@ -28,8 +34,8 @@ class SimpleGame:
         :param width:
         :return:
         """
-        self.screen = pygame.display.set_mode((height, width))
-
+        self.main_screen = pygame.display.set_mode((height, width))
+        screen.blit(self.main_character, (100,100))
 
 if __name__ == "__main__":
     game = SimpleGame()
