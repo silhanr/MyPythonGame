@@ -33,4 +33,5 @@ class SimpleGame:
 
 if __name__ == "__main__":
     game = SimpleGame()
+    # test 2
     game.main()
