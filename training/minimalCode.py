@@ -22,6 +22,12 @@ class SimpleGame:
                     running = False
 
     def open_window(self, height, width):
+        """
+        This method creates a gaming window
+        :param height:
+        :param width:
+        :return:
+        """
         self.screen = pygame.display.set_mode((height, width))
 
 
