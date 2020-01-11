@@ -4,17 +4,18 @@ import pygame, os
 
 class SimpleGame:
     def __init__(self):
+        self.root_path = "../../MyPythonGame"
+
         self.main_screen = None
-        self.main_character = pygame.image.load("../images/big_smile.png")
-
-
+        self.main_character = \
+            pygame.image.load(os.path.join(self.root_path, "images", "big_smile.png"))
 
         # initialize the pygame module
         pygame.init()
 
     def main(self):
 
-        self.open_window(860,640)
+        self.open_window(860, 640)
 
         running = True
 
@@ -35,7 +36,16 @@ class SimpleGame:
         :return:
         """
         self.main_screen = pygame.display.set_mode((height, width))
-        screen.blit(self.main_character, (100,100))
+
+        #background
+        self.main_screen.blit(
+            pygame.image.load(
+                os.path.join(self.root_path, "images", "background.jpg")))
+
+        self.main_screen.blit(self.main_character, (100, 100))
+
+        pygame.display.flip()
+
 
 if __name__ == "__main__":
     game = SimpleGame()
