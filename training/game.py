@@ -2,20 +2,31 @@
 import time
 
 import pygame, os, configparser
+from pygame.rect import Rect
 
 from training.character import MainCharacter
+from training.collision import CollisionObjects
+from training.hook import Hook
+
 
 FPS = 60
-
+HOOK_WIDTH = 5
+HOOK_HEIGHT = 10
+GROW_INTERVAL = 100
+RECT_SIZE = 50
 
 class SimpleGame:
     def __init__(self):
         self.root_path = "../../MyPythonGame"
 
-        self.game_screen = None
-        self.resolution = [1000, 500]
         # self.game_character = MainCharacter(475, 450)
         self.game_character = MainCharacter(475, 450)
+
+        self.hook = self.reset_hook()
+
+        self.game_screen = None
+        self.resolution = [1000, 500]
+
         self.clock = pygame.time.Clock()
 
         # initialize the pygame module
@@ -24,8 +35,6 @@ class SimpleGame:
     def main(self):
 
         self.open_window(self.resolution[0], self.resolution[1])
-        step_x = 10
-        step_y = 10
 
         running = True
 
@@ -47,47 +56,41 @@ class SimpleGame:
                         self.game_character.move_left()
                     if event.key == pygame.K_SPACE:
                         print("space")
-                        self.game_character.hit_space()
                         self.reload_background()
 
                         self.game_screen.blit(self.game_character.character_image,
                                               (self.game_character.position_x, \
                                                self.game_character.position_y))
 
-                        # self.clock.tick(FPS)
 
-                        pygame.display.update()
+                        #Extend hook until it reaches top of screen
+                        while self.hook.top >= 0:
+                            self.hook.shot(self.game_character)
+                            pygame.time.wait(GROW_INTERVAL)
 
-                        for i in range(5):
-                            self.clock.tick(FPS)
+                            pygame.draw.rect(self.game_screen, 5, self.hook, HOOK_WIDTH)
+                            pygame.display.update()
 
-                        self.game_character.hit_space()
+
+
 
                     self.reload_background()
                     self.game_screen.blit(self.game_character.character_image,
                                           (self.game_character.position_x, \
                                            self.game_character.position_y))
 
+                # Reset Hook
+                self.hook = self.reset_hook()
+
+                # Draw rectangle
+                pygame.draw.rect(self.game_screen, 5, self.hook, HOOK_WIDTH)
+
             self.clock.tick(FPS)
+
+
+
             pygame.display.update()
 
-            """if self.main_character.position_x > \
-                self.resolution[0]-self.main_character.image_size[0] \
-                    or self.main_character.position_x < 0:
-                step_x = -step_x
-            if self.main_character.position_y > \
-                    self.resolution[1] - self.main_character.image_size[1] \
-                    or self.main_character.position_y < 0:
-                step_y = -step_y
-            self.main_character.position_x += step_x
-            self.main_character.position_y += step_y
-
-            self.main_screen.blit(self.main_character.character_image,
-                                  (self.main_character.position_x, \
-                                   self.main_character.position_y))
-            #time.sleep(1)
-            pygame.display.flip()
-            """
 
     def open_window(self, width, height):
         """
@@ -97,7 +100,7 @@ class SimpleGame:
         :return:
         """
         self.game_screen = pygame.display.set_mode((width, height))
-        pygame.display.set_caption("Shoot the ball!")
+        pygame.display.set_caption("Shoot the square!")
 
         # display background
         self.reload_background()
@@ -108,15 +111,13 @@ class SimpleGame:
 
         pygame.display.flip()
 
-    """@staticmethod
-    def get_resolution():
-        config = configparser.ConfigParser()
-        config.read(os.path.join("../../MyPythonGame", "training", "config.ini"))
 
-        height = config['environment']['height']
-        width = config['environment']['width']
-        return [int(width),int(height)]
-    |"""
+    def reset_hook(self):
+        hook = Hook( \
+            self.game_character.position_x + self.game_character.image_size[0] / 2, \
+            1, 1, HOOK_HEIGHT)
+        hook.center_hook(self.game_character)
+        return hook
 
     def reload_background(self):
         self.game_screen.blit(
@@ -124,7 +125,11 @@ class SimpleGame:
                 os.path.join(self.root_path, "images", "background.jpg")), (0, 0))
 
 
+
+
 if __name__ == "__main__":
     game = SimpleGame()
-    # test 2
     game.main()
+
+
+
